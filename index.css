@@ -1,0 +1,30 @@
+
+label {
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;     
+}
+
+div#drop-zone {
+  background: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: visibility 0s .3s, opacity .3s 0s;
+}
+div#drop-zone.shown {
+  visibility: visible;
+  opacity: 0.6;
+  transition: opacity .3s 0s;
+}
