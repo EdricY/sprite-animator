@@ -28,3 +28,29 @@ div#drop-zone.shown {
   opacity: 0.6;
   transition: opacity .3s 0s;
 }
+
+.ctxmenu {
+  width: 175px;
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  background: white;
+  display: none;
+}
+.ctxmenu-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ctxmenu-option {
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 40px 10px 20px;
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+.ctxmenu-option:hover {
+  background: rgba(0, 0, 0, 0.2);
+}

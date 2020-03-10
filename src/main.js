@@ -1,4 +1,6 @@
 import setUpDropZone from "./dropzone";
+import SpriteBorder from "./spriteborder";
+import Point from "./point";
 
 const getEl = x => document.getElementById(x)
 const canvas = getEl("canvas")
@@ -11,6 +13,8 @@ function init() {
 }
 init();
 
+let sheetCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+let sheetctx = sheetCanvas.getContext('2d'); 
 
 const fileInput = getEl("file-input")
 fileInput.onchange = function(e) {
@@ -38,9 +42,13 @@ function addSheet(file) {
     let botPad = padding;
     let w = Math.max(canvas.width, spriteImg.width + padding2);
     let h = canvasBottom + spriteImg.height + topPad;
-    sizeCanvasTo(canvas, w, h + botPad)
-    ctx.drawImage(spriteImg, padding, canvasBottom + padding);
+    sizeCanvasTo(sheetCanvas, w, h + botPad)
+    sheetctx.drawImage(spriteImg, padding, canvasBottom + padding);
     canvasBottom += spriteImg.height + topPad;
+
+    canvas.width = sheetCanvas.width;
+    canvas.height = sheetCanvas.height;
+    mainDraw();
   })
 }
 
@@ -72,3 +80,35 @@ function backColorChanged() {
 }
 backColorChanged()
 backColorChooser.addEventListener("change", backColorChanged);
+
+var cursor = new Point(null, null);
+canvas.addEventListener("contextmenu", e => {
+  e.preventDefault();
+  ctxmenu.style.left = e.pageX + "px";
+  ctxmenu.style.top = e.pageY + "px";
+  cursor.x = e.pageX - canvas.offsetLeft
+  cursor.y = e.pageY - canvas.offsetTop
+  ctxmenu.style.display = "block";
+});
+
+window.addEventListener("click", e => {
+  e.preventDefault();
+  ctxmenu.style.display = "none";
+});
+
+const newSpriteBtn = getEl("new-sprite-opt");
+newSpriteBtn.addEventListener("click", e => {
+  spriteBorders.push(new SpriteBorder(spriteBorders.length, cursor.x, cursor.y));
+  mainDraw();
+});
+
+var spriteBorders = [];
+
+function mainDraw() {
+  ctx.drawImage(sheetCanvas, 0, 0);
+  for (let sb of spriteBorders) {
+    sb.draw(ctx, false);
+  }
+}
+
+
