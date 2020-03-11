@@ -54,3 +54,11 @@ div#drop-zone.shown {
 .ctxmenu-option:hover {
   background: rgba(0, 0, 0, 0.2);
 }
+
+#framedata-box {
+  resize: none;
+}
+
+.right {
+  float: right;
+}
