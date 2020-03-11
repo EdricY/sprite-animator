@@ -17,4 +17,8 @@ export default class Point {
   set y(y) {
     this.a[1] = y;
   }
+
+  makeCopy() {
+    return new Point(this.x, this.y);
+  }
 }

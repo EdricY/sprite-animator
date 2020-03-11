@@ -53,14 +53,23 @@ function sizeCanvasTo(canvas, ctx, w, h) {
 var spriteBorders = [];
 
 function mainDraw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(sheetCanvas, 0, 0);
   for (let sb of spriteBorders) {
-    sb.draw(ctx, false);
+    sb.draw(ctx, sb == selectedBorder);
   }
+}
+
+function qredraw() {
+  setTimeout(mainDraw, 0);
 }
 
 // event listeners
 var cursor = new Point(null, null);
+var resizingBorder = null;
+var movingBorder = null;
+var selectedBorder = null;
+
 canvas.addEventListener("contextmenu", e => {
   e.preventDefault();
   ctxmenu.style.left = e.pageX + "px";
@@ -69,6 +78,64 @@ canvas.addEventListener("contextmenu", e => {
   cursor.y = e.pageY - canvas.offsetTop
   ctxmenu.style.display = "block";
 });
+
+canvas.addEventListener("mousedown", e => {
+  e.preventDefault();
+  ctxmenu.style.display = "none";
+  cursor.x = e.pageX - canvas.offsetLeft
+  cursor.y = e.pageY - canvas.offsetTop
+  let canvasX = e.pageX - canvas.offsetLeft;
+  let canvasY = e.pageY - canvas.offsetTop;
+  for (let sb of spriteBorders) {
+    if (sb.cornerContains(canvasX, canvasY)) {
+      selectedBorder = sb;
+      resizingBorder = sb;
+      qredraw();
+      break;
+    } else if (sb.contains(canvasX, canvasY)) {
+      selectedBorder = sb;
+      movingBorder = sb;
+      qredraw();
+      break;
+    }
+  }
+});
+
+canvas.addEventListener("mousemove", e => {
+  let lastCursor = cursor.makeCopy();
+  cursor.x = e.pageX - canvas.offsetLeft;
+  cursor.y = e.pageY - canvas.offsetTop;
+  let dx = cursor.x - lastCursor.x;
+  let dy = cursor.y - lastCursor.y;
+  if (resizingBorder != null) {
+    resizingBorder.w += dx;
+    resizingBorder.h += dy;
+    qredraw();
+  } else if (movingBorder != null) {
+    // could be better...
+    movingBorder.x += dx;
+    movingBorder.y += dy;
+    qredraw();
+  }
+});
+
+window.addEventListener("mouseup", e => {
+  cursor.x = e.pageX - canvas.offsetLeft
+  cursor.y = e.pageY - canvas.offsetTop
+  let canvasX = e.pageX - canvas.offsetLeft;
+  let canvasY = e.pageY - canvas.offsetTop;
+
+  resizingBorder = null;
+  movingBorder = null;
+  selectedBorder = null;
+  for (let sb of spriteBorders) {
+    if (sb.contains(canvasX, canvasY)) {
+      selectedBorder = sb;
+    }
+  }
+  qredraw();
+});
+
 
 ctxmenu.addEventListener("contextmenu", e => {
   e.preventDefault();
@@ -122,5 +189,11 @@ function addFiles(files) {
 const newSpriteBtn = getEl("new-sprite-opt");
 newSpriteBtn.addEventListener("click", e => {
   spriteBorders.push(new SpriteBorder(spriteBorders.length, cursor.x, cursor.y));
+  mainDraw();
+});
+
+const setAnchorBtn = getEl("set-anchor-opt");
+setAnchorBtn.addEventListener("click", e => {
+  // TODO
   mainDraw();
 });

@@ -14,7 +14,7 @@ export default class SpriteBorder {
     if (selected) ctx.strokeStyle = "yellow";
     else ctx.strokeStyle = "black"
     ctx.lineWidth = 1;
-    ctx.strokeRect(x, y, w, h);
+    ctx.strokeRect(x+.5, y+.5, w, h);
     ctx.font = "14px sans-serif";
     ctx.fillStyle = "yellow";
     ctx.textBaseline = "top"
@@ -24,10 +24,10 @@ export default class SpriteBorder {
     ctx.strokeStyle = "#DDD";
     ctx.beginPath();
     ctx.moveTo(x + w - 4, y + h);
-    ctx.lineTo(x + w, y + h - 4);
+    ctx.lineTo(x + w,     y + h - 4);
     ctx.stroke();
     ctx.moveTo(x + w - 8, y + h);
-    ctx.lineTo(x + w, y + h - 8);
+    ctx.lineTo(x + w,     y + h - 8);
     ctx.stroke();
   }
 
