@@ -1,9 +1,8 @@
 import setUpDropZone from "./dropzone";
 import SpriteBorder from "./spriteborder";
 import Point from "./point";
-import { saveToFile } from "./utils"
+import { getEl, saveToFile } from "./utils"
 
-const getEl = x => document.getElementById(x)
 const canvas = getEl("canvas")
 const ctx = canvas.getContext("2d");
 const pCanvas = getEl("player-canvas")
@@ -89,6 +88,7 @@ canvas.addEventListener("contextmenu", e => {
   cursor.x = e.pageX - canvas.offsetLeft
   cursor.y = e.pageY - canvas.offsetTop
   ctxmenu.style.display = "block";
+  //TODO: this should probably set selectedBorder;
 });
 
 canvas.addEventListener("mousedown", e => {
