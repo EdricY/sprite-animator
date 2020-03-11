@@ -42,17 +42,17 @@ function addSheet(file) {
     let botPad = padding;
     let w = Math.max(canvas.width, spriteImg.width + padding2);
     let h = canvasBottom + spriteImg.height + topPad;
-    sizeCanvasTo(sheetCanvas, w, h + botPad)
+    sizeCanvasTo(sheetCanvas, sheetctx, w, h + botPad)
     sheetctx.drawImage(spriteImg, padding, canvasBottom + padding);
     canvasBottom += spriteImg.height + topPad;
 
     canvas.width = sheetCanvas.width;
     canvas.height = sheetCanvas.height;
     mainDraw();
-  })
+  });
 }
 
-function sizeCanvasTo(canvas, w, h) {
+function sizeCanvasTo(canvas, ctx, w, h) {
   let tempcanvas = document.createElement('canvas');
   let tempctx = tempcanvas.getContext('2d');
   tempcanvas.width = canvas.width; 
@@ -91,8 +91,12 @@ canvas.addEventListener("contextmenu", e => {
   ctxmenu.style.display = "block";
 });
 
-window.addEventListener("click", e => {
+ctxmenu.addEventListener("contextmenu", e => {
   e.preventDefault();
+  ctxmenu.style.display = "none";
+});
+
+window.addEventListener("click", e => {
   ctxmenu.style.display = "none";
 });
 
@@ -111,4 +115,15 @@ function mainDraw() {
   }
 }
 
+const saveBtn = getEl("save-sheet-btn");
+saveBtn.addEventListener("click", () => {
+  sheetCanvas.convertToBlob({ type: "image/png" })
+    .then(blob => saveToFile(blob, "spritesheet"));
+});
 
+function saveToFile(blob, fileName) {
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
+}
