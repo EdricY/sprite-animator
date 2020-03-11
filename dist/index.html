@@ -11,7 +11,13 @@
     <div id="ctxmenu" class="ctxmenu">
       <ul class="ctxmenu-options">
         <li class="ctxmenu-option" id="new-sprite-opt">New Sprite Border</li> 
+        <li class="ctxmenu-option" id="set-anchor-opt">Set Anchor</li>
+        <li class="ctxmenu-option" id="remove-sprite-opt">Remove Sprite Border</li>
       </ul>
+    </div>
+    <div class="right">
+      <textarea id="framedata-box" cols="50" rows="10" readonly></textarea>
+      <div><button id="clipboard-btn">Copy to Clipboard</button></div>
     </div>
     <h1>Animate Your Spritesheet</h1>
     <div><canvas id="player-canvas"></canvas></div>
@@ -24,7 +30,7 @@
       <label for="back-color">Transparency Color</label>
     </div>
     <div><canvas id="canvas"></canvas></div>
-    <div><button id="save-sheet-btn">Save Spritesheet</button></div>
+    <div><button id="save-sheet-btn">Download Spritesheet</button></div>
   </body>
 <script src="src/bundle.js"></script>
 </html>

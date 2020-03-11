@@ -8,6 +8,7 @@ const canvas = getEl("canvas")
 const ctx = canvas.getContext("2d");
 const pCanvas = getEl("player-canvas")
 const pctx = pCanvas.getContext("2d");
+const spriteBorders = [];
 
 function init() {
   
@@ -50,18 +51,29 @@ function sizeCanvasTo(canvas, ctx, w, h) {
   ctx.drawImage(tempcanvas, 0, 0);
 }
 
-var spriteBorders = [];
-
 function mainDraw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(sheetCanvas, 0, 0);
   for (let sb of spriteBorders) {
     sb.draw(ctx, sb == selectedBorder);
   }
+  updateFramedataDisplay();
 }
 
 function qredraw() {
   setTimeout(mainDraw, 0);
+}
+
+const nl = "&#10;";
+const framedataBox = getEl("framedata-box");
+function updateFramedataDisplay() {
+  //TODO: populate with the different animations (only? also?)
+  let str = "";
+  for (let sb of spriteBorders) {
+    //TODO: use string builder? maybe.
+    str += sb.toString() + "," + nl;
+  }
+  framedataBox.innerHTML = str;
 }
 
 // event listeners
@@ -81,6 +93,8 @@ canvas.addEventListener("contextmenu", e => {
 
 canvas.addEventListener("mousedown", e => {
   e.preventDefault();
+  if (ctxmenu.style.display == "block") return;
+  
   ctxmenu.style.display = "none";
   cursor.x = e.pageX - canvas.offsetLeft
   cursor.y = e.pageY - canvas.offsetTop
@@ -102,6 +116,8 @@ canvas.addEventListener("mousedown", e => {
 });
 
 canvas.addEventListener("mousemove", e => {
+  if (ctxmenu.style.display == "block") return;
+
   let lastCursor = cursor.makeCopy();
   cursor.x = e.pageX - canvas.offsetLeft;
   cursor.y = e.pageY - canvas.offsetTop;
@@ -120,22 +136,21 @@ canvas.addEventListener("mousemove", e => {
 });
 
 window.addEventListener("mouseup", e => {
+  if (ctxmenu.style.display == "block") return;
+  
   cursor.x = e.pageX - canvas.offsetLeft
   cursor.y = e.pageY - canvas.offsetTop
-  let canvasX = e.pageX - canvas.offsetLeft;
-  let canvasY = e.pageY - canvas.offsetTop;
 
   resizingBorder = null;
   movingBorder = null;
   selectedBorder = null;
   for (let sb of spriteBorders) {
-    if (sb.contains(canvasX, canvasY)) {
+    if (sb.contains(cursor.x, cursor.y)) {
       selectedBorder = sb;
     }
   }
   qredraw();
 });
-
 
 ctxmenu.addEventListener("contextmenu", e => {
   e.preventDefault();
@@ -155,7 +170,7 @@ saveBtn.addEventListener("click", () => {
 });
 
 const paddingCheckbox = getEl("padding-input");
-function paddingChanged(e) {
+function paddingChanged() {
   if (paddingCheckbox.checked) padding = 10;
   else padding = 0;
   padding2 = padding * 2;
@@ -174,7 +189,7 @@ backColorChooser.addEventListener("change", backColorChanged);
 
 const fileInput = getEl("file-input")
 fileInput.onchange = function(e) {
-  addFiles(e.target.files);
+  addFiles(fileInput.files);
 }
 setUpDropZone(e => {
   addFiles(e.dataTransfer.files)
@@ -186,9 +201,17 @@ function addFiles(files) {
   }
 }
 
+const clipboardBtn = getEl("clipboard-btn");
+clipboardBtn.addEventListener("click", function() {
+  framedataBox.select();
+  document.execCommand('copy');
+})
+
+//context menu controls
+var spriteCounter = 0;
 const newSpriteBtn = getEl("new-sprite-opt");
 newSpriteBtn.addEventListener("click", e => {
-  spriteBorders.push(new SpriteBorder(spriteBorders.length, cursor.x, cursor.y));
+  spriteBorders.push(new SpriteBorder(spriteCounter++, cursor.x, cursor.y));
   mainDraw();
 });
 
@@ -196,4 +219,16 @@ const setAnchorBtn = getEl("set-anchor-opt");
 setAnchorBtn.addEventListener("click", e => {
   // TODO
   mainDraw();
+});
+
+const removeBtn = getEl("remove-sprite-opt");
+removeBtn.addEventListener("click", e => {
+  for (let i = 0; i < spriteBorders.length; i++) {
+    let sb = spriteBorders[i];
+    if (sb.contains(cursor.x, cursor.y)) {
+      spriteBorders.splice(i, 1);
+      qredraw();
+      return;
+    }
+  }
 });

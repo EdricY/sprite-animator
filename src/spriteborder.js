@@ -6,6 +6,8 @@ export default class SpriteBorder {
     this.y = y;
     this.w = 50;
     this.h = 50;
+    this.ax = x;
+    this.ay = y;
   }
 
   draw(ctx, selected) {
@@ -47,6 +49,21 @@ export default class SpriteBorder {
     if (y < bottom - 9) return false;
     if (y > bottom) return false;
     return true;
+  }
+
+  toString() {
+    return JSON.stringify(this.toFlatObj());
+  }
+
+  toFlatObj() {
+    return {
+      x: this.x,
+      y: this.y,
+      w: this.w,
+      h: this.h,
+      ax: this.ax,
+      ay: this.ay,
+    }
   }
 }
 
