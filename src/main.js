@@ -1,7 +1,8 @@
 import setUpDropZone from "./dropzone";
 import SpriteBorder from "./spriteborder";
 import Point from "./point";
-import { getEl, saveToFile } from "./utils"
+import { getEl, saveToFile } from "./utils";
+import Animation from "./animation";
 
 const canvas = getEl("canvas")
 const ctx = canvas.getContext("2d");
@@ -56,30 +57,55 @@ function mainDraw() {
   for (let sb of spriteBorders) {
     sb.draw(ctx, sb == selectedBorder);
   }
-  updateFramedataDisplay();
+  updateFramedata();
 }
 
 function qredraw() {
   setTimeout(mainDraw, 0);
 }
 
+window.animation = null; //for debug for now
+
 const nl = "&#10;";
 const framedataBox = getEl("framedata-box");
-function updateFramedataDisplay() {
-  //TODO: populate with the different animations (only? also?)
+const animationDur = 5000;
+function updateFramedata() {
   let str = "";
+  let frames = [];
+
   for (let sb of spriteBorders) {
     //TODO: use string builder? maybe.
     str += sb.toString() + "," + nl;
+    frames.push(sb.toFlatObj());
   }
   framedataBox.innerHTML = str;
+  
+  const frameSelector = Animation.getLinearFrameSelector(animationDur, frames.length);
+  animation = new Animation(canvas, frames, frameSelector);
 }
+
+// player canvas
+var playerx, playery;
+function playerDraw() {
+  if (animation && playerx && playery) {
+    animation.draw(pctx, playerx, playery, false, 1);
+  }
+  requestAnimationFrame(playerDraw);
+}
+requestAnimationFrame(playerDraw);
+
 
 // event listeners
 var cursor = new Point(null, null);
 var resizingBorder = null;
 var movingBorder = null;
 var selectedBorder = null;
+
+pCanvas.addEventListener("mousedown", e => {
+  e.preventDefault();
+  playerx = e.pageX - pCanvas.offsetLeft;
+  playery = e.pageY - pCanvas.offsetTop;
+});
 
 canvas.addEventListener("contextmenu", e => {
   e.preventDefault();
@@ -217,7 +243,8 @@ newSpriteBtn.addEventListener("click", e => {
 
 const setAnchorBtn = getEl("set-anchor-opt");
 setAnchorBtn.addEventListener("click", e => {
-  // TODO
+  selectedBorder.ax = cursor.x;
+  selectedBorder.ay = cursor.y;
   mainDraw();
 });
 
