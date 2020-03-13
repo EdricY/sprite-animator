@@ -31,6 +31,10 @@ export default class SpriteBorder {
     ctx.moveTo(x + w - 8, y + h);
     ctx.lineTo(x + w,     y + h - 8);
     ctx.stroke();
+    
+    //anchor
+    ctx.fillStyle = "red";
+    ctx.fillRect(ax, ay, 1, 1);
   }
 
   contains(x, y) {
