@@ -34,7 +34,7 @@ export default class SpriteBorder {
     
     //anchor
     ctx.fillStyle = "red";
-    ctx.fillRect(ax, ay, 1, 1);
+    ctx.fillRect(this.ax, this.ay, 1, 1);
   }
 
   contains(x, y) {
