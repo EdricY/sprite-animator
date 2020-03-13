@@ -64,11 +64,11 @@ function qredraw() {
   setTimeout(mainDraw, 0);
 }
 
-window.animation = null; //for debug for now
+var animation = null;
 
 const nl = "&#10;";
 const framedataBox = getEl("framedata-box");
-const animationDur = 5000;
+const animationDur = 1000;
 function updateFramedata() {
   let str = "";
   let frames = [];
@@ -81,13 +81,14 @@ function updateFramedata() {
   framedataBox.innerHTML = str;
   
   const frameSelector = Animation.getLinearFrameSelector(animationDur, frames.length);
-  animation = new Animation(canvas, frames, frameSelector);
+  animation = new Animation(sheetCanvas, frames, frameSelector);
 }
 
 // player canvas
 var playerx, playery;
 function playerDraw() {
   if (animation && playerx && playery) {
+    pctx.clearRect(0, 0, pCanvas.width, pCanvas.height);
     animation.draw(pctx, playerx, playery, false, 1);
   }
   requestAnimationFrame(playerDraw);
