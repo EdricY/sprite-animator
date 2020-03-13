@@ -17,7 +17,7 @@ export default class Animation {
     if (this.spritesheet = null) return;
     
     let elapsed = Date.now() - this.t;
-    let f = frames[frameSelector(elapsed)];
+    let f = this.frames[this.frameSelector(elapsed)];
     let left = x - (f.ax - f.x) * scale;
     let top = y - (f.ay - f.y) * scale;
     let dw = f.w * scale;
