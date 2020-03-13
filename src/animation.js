@@ -23,7 +23,7 @@ export default class Animation {
     let dw = f.w * scale;
     let dh = f.h * scale;
     if (flip) {
-      let right = x + (f.x + f.w - f.ax) * scale;
+      let right = x + (f.ax - f.x) * scale;
       ctx.scale(-1, 1);
       ctx.drawImage(this.spritesheet, f.x, f.y, f.w, f.h, -right, top, dw, dh);
       ctx.scale(-1, 1);
