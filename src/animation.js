@@ -14,7 +14,7 @@ export default class Animation {
   draw(ctx, x, y, flip, scale=1) {
     if (this.frameSelector == null) return;
     if (this.frames == null || this.frames.length == 0) return;
-    if (this.spritesheet = null) return;
+    if (this.spritesheet == null) return;
     
     let elapsed = Date.now() - this.t;
     let f = this.frames[this.frameSelector(elapsed)];
