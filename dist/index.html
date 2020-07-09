@@ -21,10 +21,30 @@
     </div>
     <h1>Animate Your Spritesheet</h1>
     <div><canvas id="player-canvas"></canvas></div>
+    <button id="play-btn">Start Animation</button>
+    Duration: <input type="range" id="dur-input" min="1" value="1000" max="3000">
+    <span id="dur-span">1000</span>
+    <div>
+      <select id="frames-dropdown">
+        <option value="0">Linear</option>
+        <option value="1">Looping</option>
+        <option value="2">Bouncing</option>
+      </select>
+      Scale:<input type="number" id="scale-input" min="0" value="1" max="10" step=".1">
+    </div>
+    <label for="flip-checkbox">Flip:</label><input type="checkbox" id="flip-checkbox">
     <div>Spritesheet:</div>
+    <div id="input-grid">
+      x:<input type="number" id="selected-x" step="1">
+      y:<input type="number" id="selected-y" step="1">
+      w:<input type="number" id="selected-w" step="1">
+      h:<input type="number" id="selected-h" step="1">
+      ax:<input type="number" id="selected-ax" step="1">
+      ay:<input type="number" id="selected-ay" step="1">
+    </div>
     <input type="file" id="file-input" accept=".jpg,.jpeg,.bmp,.gif,.png"/>
-    <input type="checkbox" id="padding-input">
-    <label for="padding-input">Add Padding</label>
+    <input type="checkbox" id="padding-input" hidden>
+    <label for="padding-input" hidden>Add Padding</label>
     <div>
       <input id="back-color" type="color" value="#ffc0cb">
       <label for="back-color">Transparency Color</label>

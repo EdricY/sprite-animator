@@ -1,3 +1,8 @@
+#player-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  /* TODO: is this doing anything? */
+}
 
 label {
   user-select: none;
@@ -61,4 +66,17 @@ div#drop-zone.shown {
 
 .right {
   float: right;
+}
+
+#input-grid {
+  display: grid;
+  width: 400px;
+  grid-template-columns: auto auto auto auto;
+  gap: 10px;
+  align-items: center;
+  margin: 10px;
+}
+
+#input-grid > input {
+  padding: 4px;
 }

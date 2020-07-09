@@ -3,6 +3,7 @@ import SpriteBorder from "./spriteborder";
 import Point from "./point";
 import { getEl, saveToFile } from "./utils";
 import Animation from "./animation";
+import { bindSelectedBorder } from "./binding";
 
 const canvas = getEl("canvas")
 const ctx = canvas.getContext("2d");
@@ -57,19 +58,24 @@ function mainDraw() {
   for (let sb of spriteBorders) {
     sb.draw(ctx, sb == selectedBorder);
   }
-  updateFramedata();
+  updateFramedataDisplay();
 }
 
-function qredraw() {
-  setTimeout(mainDraw, 0);
+export function qredraw() {
+  setTimeout(() => mainDraw(), 0);
 }
 
 var animation = null;
 
 const nl = "&#10;";
 const framedataBox = getEl("framedata-box");
-const animationDur = 1000;
-function updateFramedata() {
+let frameSelectors = [
+  Animation.getLinearFrameSelector,
+  Animation.getLoopingFrameSelector,
+  Animation.getReversingFrameSelector
+];
+
+function updateFramedataDisplay() {
   let str = "";
   let frames = [];
 
@@ -80,16 +86,17 @@ function updateFramedata() {
   }
   framedataBox.innerHTML = str;
   
-  const frameSelector = Animation.getLinearFrameSelector(animationDur, frames.length);
+  const animationDur = Number(durInput.value);
+  const frameSelector = frameSelectors[framesDropdown.value](animationDur, frames.length);
   animation = new Animation(sheetCanvas, frames, frameSelector);
 }
 
 // player canvas
-var playerx, playery;
+var playerx=100, playery=100;
 function playerDraw() {
   if (animation && playerx && playery) {
     pctx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-    animation.draw(pctx, playerx, playery, false, 1);
+    animation.draw(pctx, playerx, playery, flipBox.checked, Number(scaleInput.value));
   }
   requestAnimationFrame(playerDraw);
 }
@@ -106,6 +113,7 @@ pCanvas.addEventListener("mousedown", e => {
   e.preventDefault();
   playerx = e.pageX - pCanvas.offsetLeft;
   playery = e.pageY - pCanvas.offsetTop;
+  animation.play();
 });
 
 canvas.addEventListener("contextmenu", e => {
@@ -115,7 +123,15 @@ canvas.addEventListener("contextmenu", e => {
   cursor.x = e.pageX - canvas.offsetLeft
   cursor.y = e.pageY - canvas.offsetTop
   ctxmenu.style.display = "block";
-  //TODO: this should probably set selectedBorder;
+  for (let sb of spriteBorders) {
+    if (sb.contains(cursor.x, cursor.y)) {
+      selectedBorder = sb;
+      bindSelectedBorder(sb);
+      qredraw();
+      break;
+    }
+  }
+
 });
 
 canvas.addEventListener("mousedown", e => {
@@ -140,6 +156,7 @@ canvas.addEventListener("mousedown", e => {
       break;
     }
   }
+  bindSelectedBorder(selectedBorder);
 });
 
 canvas.addEventListener("mousemove", e => {
@@ -162,7 +179,7 @@ canvas.addEventListener("mousemove", e => {
   }
 });
 
-window.addEventListener("mouseup", e => {
+canvas.addEventListener("mouseup", e => {
   if (ctxmenu.style.display == "block") return;
   
   cursor.x = e.pageX - canvas.offsetLeft
@@ -176,6 +193,7 @@ window.addEventListener("mouseup", e => {
       selectedBorder = sb;
     }
   }
+  bindSelectedBorder(selectedBorder);
   qredraw();
 });
 
@@ -190,6 +208,32 @@ window.addEventListener("click", e => {
 
 
 // controls
+const framesDropdown = getEl("frames-dropdown");
+framesDropdown.addEventListener("change", () => {
+  qredraw();
+});
+
+const durInput = getEl("dur-input");
+durInput.addEventListener("change", () => {
+  getEl("dur-span").innerText = durInput.value;
+  qredraw();
+});
+
+const scaleInput = getEl("scale-input");
+scaleInput.addEventListener("change", () => {
+  qredraw();
+});
+
+const flipBox = getEl("flip-checkbox");
+flipBox.addEventListener("click", () => {
+  qredraw();
+});
+
+const playBtn = getEl("play-btn");
+playBtn.addEventListener("click", () => {
+  qredraw();
+});
+
 const saveBtn = getEl("save-sheet-btn");
 saveBtn.addEventListener("click", () => {
   sheetCanvas.convertToBlob({ type: "image/png" })
@@ -234,11 +278,17 @@ clipboardBtn.addEventListener("click", function() {
   document.execCommand('copy');
 })
 
+// selected frameData binding controls
+
+
+
 //context menu controls
 var spriteCounter = 0;
 const newSpriteBtn = getEl("new-sprite-opt");
 newSpriteBtn.addEventListener("click", e => {
-  spriteBorders.push(new SpriteBorder(spriteCounter++, cursor.x, cursor.y));
+  selectedBorder = new SpriteBorder(spriteCounter++, cursor.x, cursor.y)
+  spriteBorders.push(selectedBorder);
+  bindSelectedBorder(selectedBorder);
   mainDraw();
 });
 
@@ -246,6 +296,7 @@ const setAnchorBtn = getEl("set-anchor-opt");
 setAnchorBtn.addEventListener("click", e => {
   selectedBorder.ax = cursor.x;
   selectedBorder.ay = cursor.y;
+  bindSelectedBorder(selectedBorder)
   mainDraw();
 });
 

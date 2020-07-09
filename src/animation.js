@@ -1,4 +1,10 @@
 export default class Animation {
+  /**
+   * Creates new instance of Animation
+   * @param {Image | Canvas} spritesheet image to draw frames from
+   * @param {FramePositionData[]} frames FramePositionData in animation order
+   * @param {(t) => number} frameSelector function to convert time to frame index
+   */
   constructor(spritesheet, frames, frameSelector) {
     this.spritesheet = spritesheet;
     this.frames = frames;
@@ -7,10 +13,16 @@ export default class Animation {
     this.t = Date.now();
   }
 
-  start() {
+  play() {
     this.t = Date.now();
   }
 
+  /**
+   * 
+   * @param {CanvasRenderingContext2D} ctx the context of the canvas to render to
+   * @param {number} x 
+   * @param {number} y 
+   */
   draw(ctx, x, y, flip, scale=1) {
     if (this.frameSelector == null) return;
     if (this.frames == null || this.frames.length == 0) return;
@@ -59,7 +71,7 @@ export default class Animation {
   }
 }
 
-class FrameData { //currently unused
+class FramePositionData { //currently unused
   constructor(x, y, w, h, ax, ay) {
     this.x = x
     this.y = y
