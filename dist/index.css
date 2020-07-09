@@ -2,6 +2,13 @@
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   /* TODO: is this doing anything? */
+  background-image: url(checker.png);
+  background-repeat: repeat;
+}
+
+#canvas {
+  background-image: url(checker.png);
+  background-repeat: repeat;
 }
 
 label {

@@ -249,14 +249,21 @@ function paddingChanged() {
 paddingCheckbox.addEventListener("change", paddingChanged)
 paddingChanged();
 
-const backColorChooser = getEl("back-color")
+const backColorChooser = getEl("back-color");
+const useChecker = getEl("checkerboard-checkbox");
 function backColorChanged() {
-  let c = backColorChooser.value
-  pCanvas.style.backgroundColor = c;
-  canvas.style.backgroundColor = c;
+  let c = backColorChooser.value;
+  backColorChooser.disabled = false;
+  if (useChecker.checked) {
+    c = "";
+    backColorChooser.disabled = true;
+  }
+  pCanvas.style.background = c;
+  canvas.style.background = c;
 }
 backColorChanged()
 backColorChooser.addEventListener("change", backColorChanged);
+useChecker.addEventListener("change", backColorChanged);
 
 const fileInput = getEl("file-input")
 fileInput.onchange = function(e) {
@@ -277,10 +284,6 @@ clipboardBtn.addEventListener("click", function() {
   framedataBox.select();
   document.execCommand('copy');
 })
-
-// selected frameData binding controls
-
-
 
 //context menu controls
 var spriteCounter = 0;
